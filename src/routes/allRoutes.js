@@ -11,12 +11,12 @@ const {
 } = require("../controllers/controllers"); // Adjust path as needed
 
 router.post("/createBoard", createBoard);
-router.post("/boards/:boardId/columns", addColumn);
-router.delete("/boards/:boardId/columns/:columnId", deleteColumn);
-router.get("/tasks", getTasks);
-router.post("/boards/:boardId/tasks", createTask);
-router.patch("/boards/:boardId/tasks/:taskId", updateTask);
-router.delete("/boards/:boardId/tasks/:taskId", deleteTask);
+router.post("/addColumn/:boardId", addColumn);
+router.delete("/deleteColumn/:columnId/:boardId", deleteColumn);
+router.post("/createTask/:columnId", createTask);
+router.get("/getTasks", getTasks);
+router.patch("/updateTask/:taskId/:columnId", updateTask);
+router.delete("/deleteTask/:taskId/:columnId", deleteTask);
 router.get("/testing", (req, res) =>
   res.json({ message: "Testing in postman" })
 );

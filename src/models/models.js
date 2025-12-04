@@ -4,7 +4,7 @@ const taskSchema = new mongoose.Schema({
   $id: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
   },
   $createdAt: {
     type: String,
@@ -55,6 +55,10 @@ const columnSchema = new mongoose.Schema({
     required: true,
     default: () => new Date().toISOString(),
   },
+  boardId: {
+    type: String,
+    required: true,
+  },
   columnName: {
     type: String,
     required: true,
@@ -78,8 +82,8 @@ const boardSchema = new mongoose.Schema(
 );
 
 // Models
-// const Task = mongoose.model("Task", todoSchema);
+const Task = mongoose.model("Task", taskSchema);
 const Board = mongoose.model("Board", boardSchema);
 const Column = mongoose.model("Column", columnSchema);
 
-module.exports = { Board, Column };
+module.exports = { Board, Column, Task };
