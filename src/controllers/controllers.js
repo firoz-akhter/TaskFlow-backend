@@ -216,12 +216,14 @@ const updateTask = async (req, res) => {
     } = req.body;
 
     // Find the task in Task collection
-    const task = await Task.findOne({ $id: taskId });
+    const task = await Task.findById(taskId);
+
+    // return res.send(task);
 
     if (!task) {
       return res.status(404).json({
         success: false,
-        message: "Task not found in database",
+        message: "Task not found in database...",
       });
     }
 
@@ -236,7 +238,9 @@ const updateTask = async (req, res) => {
     }
 
     // Find the task in current column's todos
-    const taskIndex = currentColumn.todos.findIndex((t) => t.$id === taskId);
+    const taskIndex = currentColumn.todos.findIndex(
+      (t) => t._id.toString() === taskId
+    );
 
     if (taskIndex === -1) {
       return res.status(404).json({
@@ -251,6 +255,7 @@ const updateTask = async (req, res) => {
     if (description !== undefined) task.description = description;
     if (priority !== undefined) task.priority = priority;
     if (dueDate !== undefined) task.dueDate = dueDate;
+    if (newColumnName !== undefined) task.columnName = newColumnName;
 
     // If moving to a different column
     if (newColumnId && newColumnId !== columnId) {
@@ -274,6 +279,7 @@ const updateTask = async (req, res) => {
       if (description !== undefined) embeddedTask.description = description;
       if (priority !== undefined) embeddedTask.priority = priority;
       if (dueDate !== undefined) embeddedTask.dueDate = dueDate;
+      if (newColumnName !== undefined) embeddedTask.columnName = newColumnName;
 
       // Remove from current column
       currentColumn.todos.splice(taskIndex, 1);
@@ -320,46 +326,6 @@ const updateTask = async (req, res) => {
   }
 };
 
-// Delete a task
-// const deleteTask = async (req, res) => {
-//   try {
-//     const { columnId, taskId } = req.params;
-
-//     // Find the column containing the task
-//     const columns = await Column.find({ board: boardId });
-//     let deletedTask = null;
-
-//     for (let column of columns) {
-//       const taskIndex = column.todos.findIndex((t) => t.$id === taskId);
-
-//       if (taskIndex !== -1) {
-//         deletedTask = column.todos[taskIndex];
-//         column.todos.splice(taskIndex, 1);
-//         await column.save();
-//         break;
-//       }
-//     }
-
-//     if (!deletedTask) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Task not found",
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Task deleted successfully",
-//       data: deletedTask,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
 const deleteTask = async (req, res) => {
   try {
     const { columnId, taskId } = req.params;
@@ -382,7 +348,7 @@ const deleteTask = async (req, res) => {
       });
     }
 
-    column.todos = column.todos.filter((col) => col.$id !== taskId);
+    column.todos = column.todos.filter((col) => col._id.toString() !== taskId);
     await column.save();
 
     // delete task
